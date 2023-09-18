@@ -38,7 +38,8 @@ const VoiceRSS = {
     (t.onreadystatechange = function () {
       if (4 == t.readyState && 200 == t.status) {
         if (0 == t.responseText.indexOf("ERROR")) throw t.responseText;
-        (audioElement.src = t.responseText), audioElement.play();
+        audioElement.src = t.responseText;
+        audioElement.play();
       }
     }),
       t.open("POST", "https://api.voicerss.org/", !0),
@@ -105,21 +106,26 @@ const VoiceRSS = {
   },
 };
 
-// function test() {
-//   VoiceRSS.speech({
-//     key: "e1cbcba9b4dd4303b149d55fa7b505cf",
-//     src: "Hello, world!",
-//     hl: "en-us",
-//     v: "Linda",
-//     r: 0,
-//     c: "mp3",
-//     f: "44khz_16bit_stereo",
-//     ssml: false,
-//   });
-// }
+// Disable/Enable Button
+function toggleButton() {
+  button.disabled = !button.disabled;
+}
+
+// Passing Joke to VoiceRSS API
+function tellMe(joke) {
+  VoiceRSS.speech({
+    key: "e1cbcba9b4dd4303b149d55fa7b505cf",
+    src: joke,
+    hl: "en-us",
+    v: "Linda",
+    r: 0,
+    c: "mp3",
+    f: "44khz_16bit_stereo",
+    ssml: false,
+  });
+}
 
 // Get Jokes from Joke API
-
 async function getJokes() {
   let joke = "";
   const apiUrl =
@@ -132,10 +138,15 @@ async function getJokes() {
     } else {
       joke = data.joke;
     }
-    console.log(joke);
+    // Text-to-Speech
+    tellMe(joke);
+    //Disable Button
+    toggleButton();
   } catch (error) {
     console.log("opps", error);
   }
 }
 
-getJokes();
+// Event Listeners
+button.addEventListener("click", getJokes);
+audioElement.addEventListener("ended", toggleButton);
